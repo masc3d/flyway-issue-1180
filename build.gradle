@@ -1,0 +1,33 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    ext {
+        // Package and plugin version constants
+        v_flyway = "3.2.+"
+        v_xerial_sqlite_jdbc = "3.8.+"
+    }
+     
+    dependencies {
+        // Flyway gradle plugin and local jdbc driver
+        classpath "org.flywaydb:flyway-gradle-plugin:$v_flyway"
+        classpath "org.xerial:sqlite-jdbc:$v_xerial_sqlite_jdbc"
+    }
+}
+
+apply plugin: 'org.flywaydb.flyway'
+
+// Global vars
+def db_dir = new File(project.projectDir, 'db')
+def db_file = new File(db_dir, 'test.db')
+def db_migration_dir = new File(db_dir, 'migration')
+
+flyway {
+    driver = "org.sqlite.JDBC"
+    url = "jdbc:sqlite:${db_file}"
+    locations = ["filesystem:${db_migration_dir}"]
+}
+
+println "Flyway URL: ${flyway.url}"
+println "Flyway locations: ${flyway.locations}"
